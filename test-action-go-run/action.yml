@@ -1,0 +1,26 @@
+name: "coreplatform-batch-management"
+description: "Starts, stops, and validates Core Platform Batch runners and schedulers"
+
+inputs:
+  artificial-duration:
+    required: false
+    description: "The duration to artificially delay the action"
+
+runs:
+  using: "composite"
+  steps:
+
+    # - name: Setup go
+    #   uses: actions/setup-go@v5
+    #   with:
+    #     go-version: 1.23
+
+    - name: Run action code
+      env:
+        DURATION: ${{ inputs.artificial-duration }}
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        go mod download
+        go run .
+      

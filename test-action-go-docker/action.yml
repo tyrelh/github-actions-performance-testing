@@ -1,0 +1,25 @@
+name: "coreplatform-batch-management"
+description: "Starts, stops, and validates Core Platform Batch runners and schedulers"
+
+inputs:
+  artificial-duration:
+    required: false
+    description: "The duration to artificially delay the action"
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Run action code
+      env:
+        DURATION: ${{ inputs.artificial-duration }}
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        echo "pull"
+        docker pull superflux/test-action-go-docker:0.0.1
+        # echo "inspect"
+        # docker image inspect test-action-go-docker:0.0.1
+        echo "run"
+        docker run -e DURATION=${{ inputs.artificial-duration }} superflux/test-action-go-docker:0.0.1
+      
