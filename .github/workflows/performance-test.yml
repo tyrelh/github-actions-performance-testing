@@ -1,0 +1,37 @@
+name: GitHub Actions Performance Test
+
+on: workflow_dispatch
+
+jobs:
+  build-core-platform:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read # This grants access to clone the repo
+      id-token: write # This grants access to the GitHub ID token for use with OIDC
+    strategy:
+      matrix:
+        iterations: [ one, two, three, four, five, six ]
+
+    steps:
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/GitHubActionsServiceRole"
+          role-session-name: "GitHubActionsServiceRole"
+          aws-region: "us-west-2"
+
+      - name: Go binary ${{ matrix.iterations }}
+        uses: Giftbit/giftbit-actions/test-action-go-binary@test
+
+#      - name: Go docker
+#        uses: Giftbit/giftbit-actions/test-action-go-docker@test
+
+      - name: Go docker ${{ matrix.iterations }}
+        uses: docker://superflux/test-action-go-docker:0.0.2
+
+      - name: Bash ${{ matrix.iterations }}
+        uses: Giftbit/giftbit-actions/test-action-bash@test
+
+      - name: Go run uncached ${{ matrix.iterations }}
+        uses: Giftbit/giftbit-actions/test-action-go-run@test
+        
